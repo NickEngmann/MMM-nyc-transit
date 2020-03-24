@@ -7,12 +7,11 @@
     "registry": "https://npm.pkg.github.com/elaniobro/MMM-nyc-transit"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint **/*.js --ignore-pattern node_modules/"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Elaniobro/MMM-nyc-transit"
+    "url": "https://github.com/NickEngmann/MMM-nyc-transit"
   },
   "keywords": [
     "Magic",
@@ -36,11 +35,6 @@
     "fs-extra": "^7.0.0",
     "husky": "^3.0.0",
     "mta-realtime-subway-departures": "0.0.13"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
   },
   "dependencies": {
     "mta-subway-stations": "0.0.2",
