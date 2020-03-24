@@ -60,16 +60,69 @@ Module.register('MMM-nyc-transit', { /*eslint-disable-line*/
                         trainHashMap.downTown[train.routeId].time.push(train.time);
                     }
                 });
+                var headerText = "Manhattan Bound"
+                var headerHtml = '<span class="mta mta_train mta__train--time mta_train-time__">' + headerText + '</span>' /*eslint-disable-line*/;
+                var headerListItem = document.createElement('li');
 
+                headerListItem.className = 'mta__train--item';
+                headerListItem.innerHTML = headerHtml;
+                list.appendChild(headerListItem);
+                                
+                // clean out the values less then walking time
+                var filtered = [];
                 for (var dKey in trainHashMap.downTown) {
+                    if(dKey == 'A' || dKey == 'C'){
+                        filtered = trainHashMap.downTown[dKey].time.slice(0,3).filter(function(value, index, arr){ return value > 13;})
+                    }
+                    else {
+                        filtered = trainHashMap.downTown[dKey].time.slice(0,3).filter(function(value, index, arr){ return value > 9;})
+                    }
+                    trainHashMap.downTown[dKey].time = filtered;
+                }
+
+                var trainHashMapSorted = [{
+                    time: [],
+                    dest: "",
+                    name: ""
+                }];
+                var j = 0;
+                
+                // change time objects to dates and create time sorted array
+                for (var dKey in trainHashMap.downTown) {
+                    var oldDateObj = new Date();
+                    var timeArray = [];
+
+                    for (var trainTime in trainHashMap.downTown[dKey].time){
+                        var newDateObj = new Date(oldDateObj.getTime() + trainHashMap.downTown[dKey].time[trainTime]*60000);
+                        // timeArray.push(newDateObj.toLocaleTimeString('en-US',{hour: 'numeric', minute:'numeric'}));
+                        timeArray.push(newDateObj);
+                    }
+                    trainHashMapSorted[j] = {
+                        time: timeArray,
+                        dest: trainHashMap.downTown[dKey].dest,
+                        name: dKey
+                    };
+                    j += 1;
+                };
+                //sort by time
+                trainHashMapSorted.sort((a,b) => a.time[0] - b.time[0]);
+
+                var mta_train_index = 0;
+                for (var dKey in trainHashMapSorted) {
                     var dHtml = '';
                     var downTownListItem = document.createElement('li');
 
-                    dHtml = dHtml + '<span class="mta mta__train mta__train--logo mta__train--line-' + dKey.toLowerCase() + '">' + dKey + '</span>' + trainHashMap.downTown[dKey].dest + '<span class="mta mta_train mta__train--time mta_train-time__' + dKey.toLowerCase() + '"> ' + trainHashMap.downTown[dKey].time.slice(0,3).map((trainTime) => ' ' + trainTime + 'min') + ' </span>'; /*eslint-disable-line*/
+                    dHtml = dHtml + '<span class="mta mta__train mta__train--logo mta__train--line-' + trainHashMapSorted[dKey].name.toLowerCase() + '">' + trainHashMapSorted[dKey].name + '</span>' + trainHashMapSorted[dKey].dest + '<span class="mta mta_train mta__train--time mta_train-time__' + trainHashMapSorted[dKey].name.toLowerCase() + '"> ' + trainHashMapSorted[dKey].time.map((trainTime) => ' ' + trainTime.toLocaleTimeString('en-US',{hour: 'numeric', minute:'numeric'}) + '') + ' </span>'; /*eslint-disable-line*/
+                    
+                    if(mta_train_index == 0){
+                        downTownListItem.className = 'mta__train--main';
+                    }
+                    else{
+                        downTownListItem.className = 'mta__train--item';
+                    }
 
-                    downTownListItem.className = 'mta__train--item';
                     downTownListItem.innerHTML = dHtml;
-
+                    mta_train_index++;
                     list.appendChild(downTownListItem);
                 }
 
@@ -88,8 +141,14 @@ Module.register('MMM-nyc-transit', { /*eslint-disable-line*/
                 for (var uKey in trainHashMap.upTown) {
                     var uHtml = '';
                     var upTownListItem = document.createElement('li');
+                    var oldDateObj = new Date();
 
-                    uHtml = uHtml + '<span class="mta mta__train mta__train--logo mta__train--line-' + uKey.toLowerCase() + '">' + uKey + '</span>' + trainHashMap.upTown[uKey].dest + '<span class="mta mta_train mta__train--time mta_train-time__' + uKey.toLowerCase() + '"> ' + trainHashMap.upTown[uKey].time.slice(0, 3).map((trainTime) => ' ' + trainTime + 'min') + '</span>'; /*eslint-disable-line*/
+                    var timeArray = [];
+                    for (var trainTime in trainHashMap.upTown[uKey].time.slice(0,3)){
+                        var newDateObj = new Date(oldDateObj.getTime() + trainHashMap.upTown[uKey].time[trainTime]*60000);
+                        timeArray.push(newDateObj.toLocaleTimeString('en-US',{hour: 'numeric', minute:'numeric'}));
+                    }
+                    // uHtml = uHtml + '<span class="mta mta__train mta__train--logo mta__train--line-' + uKey.toLowerCase() + '">' + uKey + '</span>' + trainHashMap.upTown[uKey].dest + '<span class="mta mta_train mta__train--time mta_train-time__' + uKey.toLowerCase() + '"> ' + timeArray.slice(0,3).map((trainTime) => ' ' + trainTime + '') + '</span>'; /*eslint-disable-line*/
 
                     upTownListItem.className = 'mta__train--item';
                     upTownListItem.innerHTML = uHtml;
@@ -109,7 +168,7 @@ Module.register('MMM-nyc-transit', { /*eslint-disable-line*/
                     var upMarHtml = '';
                     var upTownMarListItem = document.createElement('span');
 
-                    upMarHtml = upMarHtml + '<span class="mta mta__train mta__train--logo mta__train--line-' + upTown[upMarKey].routeId.toLowerCase() + '">' + upTown[upMarKey].routeId.toLowerCase() + '</span><span class="mta mta_train mta__train--time mta_train-time__' + upMarKey + '">' + upTown[upMarKey].time + 'min</span> | <span class="mta mta_train mta__train--destination">' + upTown[upMarKey].destination + '</span>'; /*eslint-disable-line*/
+                    // upMarHtml = upMarHtml + '<span class="mta mta__train mta__train--logo mta__train--line-' + upTown[upMarKey].routeId.toLowerCase() + '">' + upTown[upMarKey].routeId.toLowerCase() + '</span><span class="mta mta_train mta__train--time mta_train-time__' + upMarKey + '">' + upTown[upMarKey].time + 'min</span> | <span class="mta mta_train mta__train--destination">' + upTown[upMarKey].destination + '</span>'; /*eslint-disable-line*/
 
                     upTownMarListItem.className = 'mta__train--item';
                     upTownMarListItem.innerHTML = upMarHtml;
@@ -136,6 +195,30 @@ Module.register('MMM-nyc-transit', { /*eslint-disable-line*/
         }
 
         return wrapper;
+    },
+
+     compareValues: function(key, order = 'asc') {
+        return function innerSort(a, b) {
+          if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+            // property doesn't exist on either object
+            return 0;
+          }
+      
+          const varA = (typeof a[key] === 'string')
+            ? a[key].toUpperCase() : a[key];
+          const varB = (typeof b[key] === 'string')
+            ? b[key].toUpperCase() : b[key];
+      
+          let comparison = 0;
+          if (varA > varB) {
+            comparison = 1;
+          } else if (varA < varB) {
+            comparison = -1;
+          }
+          return (
+            (order === 'desc') ? (comparison * -1) : comparison
+          );
+        };
     },
 
     getDepartures: function() {
