@@ -2,7 +2,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors)
 ![](./mmm-nyc-transit.gif)
 ## ℹ️ How to use this module
-1. clone this repo with the following command: `git clone https://github.com/Elaniobro/MMM-nyc-transit.git`
+1. clone this repo with the following command: `git clone https://github.com/NickEngmann/MMM-nyc-transit.git`
 1. install all the npm modules with either `yarn install` or `npm install`
 1. update your [Magic Mirror Config](https://github.com/MichMich/MagicMirror/blob/master/config/config.js.sample), by adding the following object:
 ```javascript
