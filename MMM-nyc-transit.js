@@ -61,6 +61,9 @@ Module.register('MMM-nyc-transit', { /*eslint-disable-line*/
                         trainHashMap.downTown[train.routeId].time.push(train.time);
                     }
                 });
+                var headerText = "Manhattan Bound"
+                var headerHtml = '<span class="mta mta_train mta__train--time mta_train-time__">' + headerText + '</span>' /*eslint-disable-line*/;
+                var headerListItem = document.createElement('li');
 
                 var headerTextDowntown = "Manhattan Bound"
                 var headerHtmlDowntown = '<span class="mta mta_train mta__train--time mta_train-time__">' + headerTextDowntown + '</span>' /*eslint-disable-line*/;
@@ -189,6 +192,7 @@ Module.register('MMM-nyc-transit', { /*eslint-disable-line*/
                 for (var uKey in trainHashMapSortedUpTown) {
                     var uHtml = '';
                     var upTownListItem = document.createElement('li');
+                    var oldDateObj = new Date();
 
                     uHtml = uHtml + '<span class="mta mta__train mta__train--logo mta__train--line-' + trainHashMapSortedUpTown[uKey].name.toLowerCase() + '">' + trainHashMapSortedUpTown[uKey].name + '</span>' + trainHashMapSortedUpTown[uKey].dest + '<span class="mta mta_train mta__train--time mta_train-time__' + trainHashMapSortedUpTown[uKey].name.toLowerCase() + '"> ' + trainHashMapSortedUpTown[uKey].time.map((trainTime) => ' ' + trainTime.toLocaleTimeString('en-US',{hour: 'numeric', minute:'numeric'}) + '') + ' </span>'; /*eslint-disable-line*/
                     
